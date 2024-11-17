@@ -1,1 +1,1 @@
-﻿# Akıll Sera İklimlendirme Sistemi
+﻿# Akıllı Sera İklimlendirme Sistemi
