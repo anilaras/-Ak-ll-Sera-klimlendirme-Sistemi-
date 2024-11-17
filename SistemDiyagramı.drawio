@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" modified="2024-11-02T19:56:58.503Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0" etag="rfxHbZDolK0csRavBkAY" version="24.3.1" type="device">
+  <diagram name="Sayfa -1" id="ft_ijiqHekzHx4NaJKNA">
+    <mxGraphModel dx="1050" dy="537" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="B-D43Y_isxztKUacIp14-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=classic;startFill=1;strokeWidth=5;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-1" target="B-D43Y_isxztKUacIp14-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#fa6800;strokeColor=#C73500;strokeWidth=5;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-1" target="B-D43Y_isxztKUacIp14-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;fillColor=#fa6800;strokeColor=#C73500;strokeWidth=5;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-1" target="B-D43Y_isxztKUacIp14-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;fillColor=#fa6800;strokeColor=#C73500;strokeWidth=5;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-1" target="B-D43Y_isxztKUacIp14-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-1" value="raspberry pi" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="250" width="290" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;strokeWidth=5;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-2" target="B-D43Y_isxztKUacIp14-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-2" value="LDR (IŞIK) Sensörü" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeWidth=5;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-3" target="B-D43Y_isxztKUacIp14-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="160" />
+              <mxPoint x="253" y="160" />
+              <mxPoint x="253" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-3" value="Torak Nem Sensörü" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;strokeWidth=5;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-4" target="B-D43Y_isxztKUacIp14-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="500" y="160" />
+              <mxPoint x="398" y="160" />
+              <mxPoint x="398" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-4" value="Hava Sıcaklığı ve Nem Sensörü" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;strokeWidth=5;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-5" target="B-D43Y_isxztKUacIp14-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-5" value="Gaz Sensörü" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;startArrow=classic;startFill=1;strokeWidth=5;fillColor=#dae8fc;strokeColor=#6c8ebf;" edge="1" parent="1" source="B-D43Y_isxztKUacIp14-10" target="B-D43Y_isxztKUacIp14-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-10" value="Back&lt;span style=&quot;background-color: initial;&quot;&gt;end REST API&lt;/span&gt;" style="shape=dataStorage;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="285" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-14" value="WEB ve Mobil Arayüz" style="verticalLabelPosition=bottom;aspect=fixed;html=1;shape=mxgraph.salesforce.web;" vertex="1" parent="1">
+          <mxGeometry x="607.72" y="430" width="164.56" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-16" value="LED Işık" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="105" y="510" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-17" value="Hava Değişim Fanı" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="265" y="510" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-18" value="Su Pompası" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="425" y="510" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-22" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn1.iconfinder.com/data/icons/fruit-136/64/Fruit_iconfree_Filled_Outline_raspberry-healthy-organic-food-fruit_icon-128.png" vertex="1" parent="1">
+          <mxGeometry x="201" y="285" width="79" height="79" as="geometry" />
+        </mxCell>
+        <mxCell id="B-D43Y_isxztKUacIp14-23" value="" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;align=center;shape=mxgraph.office.servers.reverse_proxy;" vertex="1" parent="1">
+          <mxGeometry x="740" y="298" width="41" height="53" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
