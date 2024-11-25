@@ -1,52 +1,108 @@
 <?php
-require_once 'sql_functions.php';
+// router.php
+require_once 'config.php';
+require_once 'database_operations.php';
 
-$requestUri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-$method = $_SERVER['REQUEST_METHOD'];
-$token = $_SERVER['HTTP_TOKEN'] ?? null;
+class Router {
+    private $db;
+    private $method;
+    private $uri;
+    private $routes = [
+        'GET' => [],
+        'POST' => []
+    ];
 
-if (!validateToken($token)) {
-    http_response_code(403);
-    echo json_encode(["error" => "Unauthorized"]);
-    exit;
+    public function __construct() {
+        $this->db = new DatabaseOperations();
+        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->uri = trim($_SERVER['REQUEST_URI'], '/');
+        
+        // CORS ayarları
+        header('Access-Control-Allow-Origin: *');
+        header('Content-Type: application/json');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Authorization, Content-Type');
+        
+        if ($this->method === 'OPTIONS') {
+            exit(0);
+        }
+    }
+
+    private function validateToken() {
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            $this->sendResponse(401, ['error' => 'No token provided']);
+            return false;
+        }
+
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
+        if (!$this->db->validateToken($token)) {
+            $this->sendResponse(401, ['error' => 'Invalid token']);
+            return false;
+        }
+
+        return true;
+    }
+
+    private function sendResponse($statusCode, $data) {
+        http_response_code($statusCode);
+        echo json_encode($data);
+        exit;
+    }
+
+    public function run() {
+        // Token kontrolü (public endpoint'ler hariç)
+        if (!in_array($this->uri, ['login', 'register'])) {
+            if (!$this->validateToken()) {
+                return;
+            }
+        }
+        $url_route = substr($this->uri, strpos($this->uri, "/") + 1);
+        switch ($url_route) {
+            case 'api/' . API_VERSION . '/sensor-data':
+                if ($this->method === 'POST') {
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if ($this->db->saveSensorData($data)) {
+                        $this->sendResponse(201, ['message' => 'Data saved successfully']);
+                    }
+                } elseif ($this->method === 'GET') {
+                    $startDate = $_GET['start_date'] ?? null;
+                    $endDate = $_GET['end_date'] ?? null;
+                    $data = $this->db->getSensorData($startDate, $endDate);
+                    $this->sendResponse(200, $data);
+                }
+                break;
+
+            case 'api/' . API_VERSION . '/thresholds':
+                if ($this->method === 'GET') {
+                    $data = $this->db->getThresholds();
+                    $this->sendResponse(200, $data);
+                } elseif ($this->method === 'POST') {
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if ($this->db->updateThresholds($data)) {
+                        $this->sendResponse(200, ['message' => 'Thresholds updated']);
+                    }
+                }
+                break;
+
+            case 'api/' . API_VERSION . '/led-settings':
+                if ($this->method === 'GET') {
+                    $data = $this->db->getLedSettings();
+                    $this->sendResponse(200, $data);
+                } elseif ($this->method === 'POST') {
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    if ($this->db->updateLedSettings($data)) {
+                        $this->sendResponse(200, ['message' => 'LED settings updated']);
+                    }
+                }
+                break;
+
+            default:
+                $this->sendResponse(404, ['error' => 'Endpoint not found']);
+        }
+    }
 }
 
-switch ($requestUri[1]) {
-    case 'sensor_data':
-        if ($method === 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
-            insertSensorData($data);
-            echo json_encode(["status" => "success"]);
-        } elseif ($method === 'GET') {
-            $startDate = $_GET['start_date'] ?? null;
-            $endDate = $_GET['end_date'] ?? null;
-            echo json_encode(getSensorData($startDate, $endDate));
-        }
-        break;
-
-    case 'thresholds':
-        if ($method === 'GET') {
-            echo json_encode(getThresholds());
-        } elseif ($method === 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
-            updateThresholds($data['parameter'], $data['value']);
-            echo json_encode(["status" => "success"]);
-        }
-        break;
-
-    case 'led_settings':
-        if ($method === 'GET') {
-            echo json_encode(getLedSettings());
-        } elseif ($method === 'POST') {
-            $data = json_decode(file_get_contents('php://input'), true);
-            updateLedSettings($data['red'], $data['green'], $data['blue'], $data['brightness']);
-            echo json_encode(["status" => "success"]);
-        }
-        break;
-
-    default:
-        http_response_code(404);
-        echo json_encode(["error" => "Endpoint not found"]);
-        break;
-}
-?>
+// Router'ı başlat
+$router = new Router();
+$router->run();

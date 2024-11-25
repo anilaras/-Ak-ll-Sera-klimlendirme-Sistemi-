@@ -2,7 +2,7 @@
 Options -Indexes
 RewriteEngine On
 
-# Tüm istekleri index.php üzerinden yönlendirme
+# Tüm istekleri router.php üzerinden yönlendirme
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+RewriteRule ^(.*)$ router.php [QSA,L]
