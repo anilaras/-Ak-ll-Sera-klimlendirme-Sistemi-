@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		867A5A782CF3D9A800FCAD2B /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 867A5A772CF3D9A800FCAD2B /* SwiftUICharts */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		86715C922CEB583D00885560 /* SGACSystemApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SGACSystemApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				867A5A782CF3D9A800FCAD2B /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = SGACSystemApp;
 			packageProductDependencies = (
+				867A5A772CF3D9A800FCAD2B /* SwiftUICharts */,
 			);
 			productName = SGACSystemApp;
 			productReference = 86715C922CEB583D00885560 /* SGACSystemApp.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 86715C892CEB583D00885560;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				867A5A762CF3D9A800FCAD2B /* XCRemoteSwiftPackageReference "ChartView" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 86715C932CEB583D00885560 /* Products */;
 			projectDirPath = "";
@@ -326,6 +335,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		867A5A762CF3D9A800FCAD2B /* XCRemoteSwiftPackageReference "ChartView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppPear/ChartView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		867A5A772CF3D9A800FCAD2B /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 867A5A762CF3D9A800FCAD2B /* XCRemoteSwiftPackageReference "ChartView" */;
+			productName = SwiftUICharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 86715C8A2CEB583D00885560 /* Project object */;
 }
