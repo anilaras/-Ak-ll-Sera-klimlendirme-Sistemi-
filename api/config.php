@@ -5,11 +5,7 @@ define('DB_NAME', 'yesilarge_api');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-// Token için gizli anahtar
-define('JWT_SECRET', 'your_secret_key_here');
 
-// Diğer sabitler
-define('TOKEN_EXPIRY_HOURS', 24);
 define('API_VERSION', 'v1');
 
 class Database {

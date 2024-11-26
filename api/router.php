@@ -103,6 +103,3 @@ class Router {
     }
 }
 
-// Router'ı başlat
-$router = new Router();
-$router->run();
