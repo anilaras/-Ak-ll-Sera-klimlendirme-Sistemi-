@@ -10,11 +10,6 @@ from picamera import PiCamera
 import socket
 import netifaces
 import threading
-from PIL import Image, ImageDraw, ImageFont
-import luma.core.interface.serial
-from luma.core.interface.parallel import bitbang_6800
-from luma.core.render import canvas
-from luma.lcd.device import ks0108
 import os
 
 # Pin tanımlamaları
@@ -74,7 +69,7 @@ class SensorSystem:
         self.API_BASE_URL = "http://yesilarge.online/api/v1/"
         
     def get_network_info(self):
-        """Ağ bilgilerini alma"""
+#        """Ağ bilgilerini alma"""
         ip_address = ""
         network_name = ""
         
@@ -100,24 +95,9 @@ class SensorSystem:
                 pass
                 
         return ip_address, network_name
-        
-    def update_lcd(self, sensor_data):
-        """LCD ekranı güncelleme"""
-        ip_address, network_name = self.get_network_info()
-        
-        with canvas(self.lcd) as draw:
-            # IP ve ağ bilgileri
-            draw.text((0, 0), f"IP: {ip_address}", fill="white")
-            draw.text((0, 10), f"Network: {network_name}", fill="white")
-            
-            # Sensör bilgileri
-            draw.text((0, 20), f"Temp: {sensor_data['temperature']}°C", fill="white")
-            draw.text((0, 30), f"Hum: {sensor_data['humidity']}%", fill="white")
-            draw.text((0, 40), f"Soil: {sensor_data['soil_moisture']}%", fill="white")
-            draw.text((0, 50), f"Light: {sensor_data['light_level']}", fill="white")
 
     def fade_leds(self, target_brightness):
-        """LED'leri yavaşça açma"""
+#        """LED'leri yavaşça açma"""
         current_time = time.time()
         elapsed_time = current_time - self.led_fade_start
         
@@ -129,7 +109,7 @@ class SensorSystem:
         return brightness
 
     def set_led_color(self, color, brightness):
-        """LED şerit rengini ve parlaklığını ayarlama"""
+#        """LED şerit rengini ve parlaklığını ayarlama"""
         r, g, b = color
         for i in range(LED_COUNT):
             self.strip.setPixelColor(i, Color(
@@ -140,7 +120,7 @@ class SensorSystem:
         self.strip.show()
 
     def get_thresholds(self):
-        """Sunucudan eşik değerlerini alma"""
+#        """Sunucudan eşik değerlerini alma"""
         try:
             response = requests.get(f"{self.API_BASE_URL}/thresholds", headers= headers)
             if response.status_code == 200:
@@ -151,14 +131,14 @@ class SensorSystem:
         return False
 
     def send_sensor_data(self, sensor_data):
-        """Sensör verilerini sunucuya gönderme"""
+#        """Sensör verilerini sunucuya gönderme"""
         try:
             requests.post(f"{self.API_BASE_URL}/sensor-data", json=sensor_data, headers=headers)
         except:
             pass
 
     def send_photo(self):
-        """Fotoğraf çekip sunucuya gönderme"""
+#        """Fotoğraf çekip sunucuya gönderme"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         photo_path = f"/tmp/plant_{timestamp}.jpg"
         
@@ -173,7 +153,7 @@ class SensorSystem:
             pass
 
     def process_sensor_data(self, sensor_data):
-        """Sensör verilerini işleme"""
+#        """Sensör verilerini işleme"""
         # Su pompası kontrolü
         if sensor_data['soil_moisture'] < self.current_thresholds['soil_moisture']:
             GPIO.output(RELAY_PIN, GPIO.HIGH)
@@ -199,7 +179,7 @@ class SensorSystem:
             self.led_fade_start = 0
 
     def run(self):
-        """Ana döngü"""
+#        """Ana döngü"""
         while True:
             # Sensör verilerini okuma
             if self.serial.in_waiting:
@@ -209,10 +189,6 @@ class SensorSystem:
                     
                     # Sensör verilerini işleme
                     self.process_sensor_data(sensor_data)
-                    
-                    # LCD güncelleme
-                    self.update_lcd(sensor_data)
-                    
                     # Sensör verilerini sunucuya gönderme
                     self.send_sensor_data(sensor_data)
                 except:
