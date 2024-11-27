@@ -20,6 +20,9 @@ struct TabView: View {
                 case .past:
                     EmptyView()
                     Spacer()
+                case .settings:
+                    SettingsView()
+                    Spacer()
                 }
                 
                     
@@ -50,14 +53,14 @@ private extension TabView {
             
             TabBarIcon(viewRouter: viewRouter, assignedPage: .past, imageName: "clock", tabName: "Geçmiş")
             
-//            Spacer()
-//            
-//            TabBarIcon(viewRouter: viewRouter, assignedPage: .statistics, imageName: "chart.xyaxis.line", tabName: "İstatistik")
+            Spacer()
+            
+            TabBarIcon(viewRouter: viewRouter, assignedPage: .settings, imageName: "gear", tabName: "Ayarlar")
             
             Spacer()
         }
         .frame(height: 50)
-        .background(Color("backgroundColor"))
+        .background(Color(hex: "#232F34"))
         .padding([.top])
     }
 }

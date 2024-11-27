@@ -64,13 +64,22 @@ extension HomeView {
                 Spacer()
                 Text("Sera İklimlendirme Sistemi")
                     .foregroundColor(.white)
-                    .font(.title.bold())
+                    .font(.system(size: 24).bold())
                     .multilineTextAlignment(.center)
                     .padding(.top)
                 Spacer()
             }
             
             ScrollView {
+                
+                HStack {
+                    Text("Sera Bilgisi")
+                        .foregroundColor(.white)
+                        .font(.system(size: 18).bold())
+                        
+                    Spacer()
+                }
+                .padding(.leading)
                 
                 HStackInfoCell(oneTitle: "Toprak Nemi", oneValue: "%50", twoTitle: "Hava Basıncı", twoValue: "25 Bar", onPrimaryButtonTap: {
                     selectedStatisticTitle = "Toprak Nemi"
@@ -87,6 +96,14 @@ extension HomeView {
                     selectedStatisticTitle = "Işık Miktarı"
                     showStatisticModal = true
                 })
+                
+                HomeInfoCell(title: "Gaz Miktarı", value: "150 PPM")
+                    .onTapGesture {
+                        selectedStatisticTitle = "Gaz Miktarı"
+                        showStatisticModal = true
+                    }
+                    .padding([.leading, .trailing], 24)
+                    .padding(.top)
                 
             }
 

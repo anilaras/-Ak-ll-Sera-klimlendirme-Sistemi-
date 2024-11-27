@@ -50,3 +50,25 @@ extension Color {
         )
     }
 }
+
+extension Color {
+    var components: (red: Int, green: Int, blue: Int, opacity: CGFloat) {
+
+        #if canImport(UIKit)
+        typealias NativeColor = UIColor
+        #elseif canImport(AppKit)
+        typealias NativeColor = NSColor
+        #endif
+
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var o: CGFloat = 0
+
+        guard NativeColor(self).getRed(&r, green: &g, blue: &b, alpha: &o) else {
+            return (0, 0, 0, 0)
+        }
+
+        return (abs(Int(r * 255)), abs(Int(g * 255)), abs(Int(b * 255)), o)
+    }
+}

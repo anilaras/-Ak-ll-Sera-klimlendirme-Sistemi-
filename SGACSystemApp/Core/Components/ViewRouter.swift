@@ -14,5 +14,5 @@ class ViewRouter: ObservableObject {
 enum TabsPage {
     case home
     case past
-//    case statistics
+    case settings
 }
