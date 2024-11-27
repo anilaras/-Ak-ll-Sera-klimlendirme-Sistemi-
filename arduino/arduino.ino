@@ -21,13 +21,11 @@ int inverseMapping(int value) {
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("INIT");
   if (!bme.begin(BME280_I2C_ADDR)) {
     Serial.println("BME280 başlatılamadı, bağlantıyı kontrol edin.");
     while (1);
   }
   delay(1000); 
-  Serial.println("OK");
 }
 
 void loop() {
@@ -35,15 +33,15 @@ void loop() {
   int soilMoistureValue = inverseMapping(analogRead(PIN_SOIL_MOISTURE));
   int mq135Value = analogRead(PIN_MQ135);
 
-  float temperature = bme.readTemperature();
-  float humidity = bme.readHumidity();
-  float pressure = bme.readPressure() / 100.0F;
+  int temperature = bme.readTemperature();
+  int humidity = bme.readHumidity();
+  int pressure = bme.readPressure() / 100.0F;
   
   float rzero = mq135_sensor.getRZero();
   float correctedRZero = mq135_sensor.getCorrectedRZero(temperature, humidity);
   float resistance = mq135_sensor.getResistance();
-  float ppm = mq135_sensor.getPPM();
-  float correctedPPM = mq135_sensor.getCorrectedPPM(temperature, humidity);
+  int ppm = mq135_sensor.getPPM();
+  int correctedPPM = mq135_sensor.getCorrectedPPM(temperature, humidity);
   
   StaticJsonDocument<jsonBufferSize> jsonDoc;
   jsonDoc["rawgas"] = mq135Value;

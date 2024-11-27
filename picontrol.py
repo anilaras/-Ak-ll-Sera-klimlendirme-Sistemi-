@@ -1,218 +1,197 @@
 import serial
-import json
-import time
 import requests
-from datetime import datetime
+import json
 import RPi.GPIO as GPIO
-from rpi_ws281x import *
-import numpy as np
-from picamera import PiCamera
-import socket
-import netifaces
-import threading
-import os
+import board
+import neopixel
+import time
 
-# Pin tanımlamaları
-RELAY_PIN = 18  # Su pompası rölesi
-FAN_PIN = 23    # Fan kontrolü
-LED_COUNT = 60  # WS2811 LED sayısı
-LED_PIN = 18    # WS2811 veri pini
-LED_FREQ_HZ = 800000
-LED_DMA = 10
-LED_BRIGHTNESS = 255
-LED_CHANNEL = 0
-LED_INVERT = False
+# Raspberry Pi GPIO ve WS2811 ayarları
+GPIO.setmode(GPIO.BCM)
+RELAY_PIN = 17  # Röle kontrolü için GPIO pini
+FAN_PIN = 27    # Fan kontrolü için GPIO pini
+LED_PIN = board.D18  # WS2811 LED şerit için
+NUM_PIXELS = 12  # WS2811 LED şerit uzunluğu
+ORDER = neopixel.GRB
 
-# Varsayılan eşik değerleri
-DEFAULT_THRESHOLDS = {
-    'soil_moisture': 30,
-    'light_level': 500,
-    'gas_level': 1000,
-    'air_pressure': 1013,
-    'temperature': 25,
-    'humidity': 60,
-    'led_color': (128, 0, 128),  # Mor renk
-    'led_brightness': 100
-}
+GPIO.setup(RELAY_PIN, GPIO.OUT)
+GPIO.setup(FAN_PIN, GPIO.OUT)
+pixels = neopixel.NeoPixel(LED_PIN, NUM_PIXELS, brightness=0.0, auto_write=False, pixel_order=ORDER)
 
+# UART bağlantısı ayarları
+SERIAL_PORT = '/dev/ttyUSB0'
+BAUD_RATE = 115200
+serial_conn = serial.Serial(SERIAL_PORT, BAUD_RATE)
+
+# Sunucudan eşik değerlerini almak ve sensör verilerini göndermek için API ayarları
+THRESHOLD_API_URL = "http://yesilarge.online/api/v1/thresholds"
+SENSOR_DATA_API_URL = "http://yesilarge.online/api/v1/sensor-data"  # Sensör verisi gönderme URL'i
+LED_SETTINGS_API_URL = "http://yesilarge.online/api/v1/led-settings"
 headers = {"Authorization": "cokgizli"}
 
-class SensorSystem:
-    def __init__(self):
-        # GPIO ayarları
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(RELAY_PIN, GPIO.OUT)
-        GPIO.setup(FAN_PIN, GPIO.OUT)
-        
-        # WS2811 LED strip ayarları
-        self.strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-        self.strip.begin()
-        
-        # Serial port ayarları
-        self.serial = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-        
-        # Kamera ayarları
-        self.camera = PiCamera()
-        self.camera.resolution = (1920, 1080)
-        
-        # LCD ekran ayarları
-        self.lcd = ks0108(port=0, device=0, bus_speed_hz=8000000)
-        
-        # Durum değişkenleri
-        self.current_thresholds = DEFAULT_THRESHOLDS.copy()
-        self.last_photo_time = time.time()
-        self.last_threshold_update = time.time()
-        self.led_fade_start = 0
-        self.led_target_brightness = 0
-        
-        # API endpoint'leri
-        self.API_BASE_URL = "http://yesilarge.online/api/v1"
-        
-    def get_network_info(self):
-#        """Ağ bilgilerini alma"""
-        ip_address = ""
-        network_name = ""
-        
-        # Wi-Fi kontrolü
-        try:
-            wifi = netifaces.ifaddresses('wlan0')
-            if netifaces.AF_INET in wifi:
-                ip_address = wifi[netifaces.AF_INET][0]['addr']
-                # Wi-Fi ağ adını alma
-                with open('/etc/NetworkManager/system-connections/*') as f:
-                    for line in f:
-                        if "ssid=" in line:
-                            network_name = line.split('=')[1].strip()
-                            break
-        except:
-            # Ethernet kontrolü
-            try:
-                eth = netifaces.ifaddresses('eth0')
-                if netifaces.AF_INET in eth:
-                    ip_address = eth[netifaces.AF_INET][0]['addr']
-                    network_name = "Ethernet"
-            except:
-                pass
-                
-        return ip_address, network_name
+# Default eşik değerleri ve varsayılan LED rengi
+DEFAULT_THRESHOLDS = {
+    "soil_moisture": 30,
+    "light_level": 25,
+    "gas_level": 20,
+    "air_pressure": 300,
+    "temperature": 400,
+    "humidity": 1000,
+}
 
-    def fade_leds(self, target_brightness):
-#        """LED'leri yavaşça açma"""
-        current_time = time.time()
-        elapsed_time = current_time - self.led_fade_start
-        
-        if elapsed_time > 5:  # 5 saniye sonra tam parlaklık
-            brightness = target_brightness
-        else:
-            brightness = int((elapsed_time / 5) * target_brightness)
-            
-        return brightness
+LED_THRESHOLDS = {
+    "red": "128",
+    "green": "0",
+    "blue": "128",
+    "brightness": "100",
+}
 
-    def set_led_color(self, color, brightness):
-       print("LED şerit rengini ve parlaklığını ayarlanıyor \n r: " + r + " g: " + g + " b: " + b + " brightness: " + brightness)
-        r, g, b = color
-        for i in range(LED_COUNT):
-            self.strip.setPixelColor(i, Color(
-                int(r * brightness / 255),
-                int(g * brightness / 255),
-                int(b * brightness / 255)
-            ))
-        self.strip.show()
+thresholds = DEFAULT_THRESHOLDS  # Başlangıçta default değerler
+led_thresholds = LED_THRESHOLDS  # Başlangıçta default değerler
 
+# Su pompası, fan ve LED kontrol fonksiyonları
+def control_relay(state):
+    GPIO.output(RELAY_PIN, GPIO.HIGH if state else GPIO.LOW)
 
-    def get_thresholds(self):
-        print("Sunucudan eşik değerlerini alınıyor")
-        try:
-            response = requests.get(f"{self.API_BASE_URL}/thresholds", headers= headers)
-            if response.status_code == 200:
-                self.current_thresholds = response.json()
-                print("Eşik değerleri başarıyla alındı \n " + self.current_thresholds)
-                return True
-        except:
-            return False
-        return False
+def control_fan(state):
+    GPIO.output(FAN_PIN, GPIO.HIGH if state else GPIO.LOW)
 
-    def send_sensor_data(self, sensor_data):
-        print("Sensör verilerini sunucuya gönderiliyor")
-        try:
-            requests.post(f"{self.API_BASE_URL}/sensor-data", json=sensor_data, headers=headers)
-        except:
-            pass
+def control_led(color, brightness):
+    pixels.fill(color)
+    pixels.brightness = brightness
+    pixels.show()
 
-    def send_photo(self):
-#        """Fotoğraf çekip sunucuya gönderme"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        photo_path = f"/tmp/plant_{timestamp}.jpg"
-        
-        self.camera.capture(photo_path)
-        
-        try:
-            with open(photo_path, 'rb') as photo:
-                files = {'photo': photo}
-                requests.post(f"{self.API_BASE_URL}/upload-photo", files=files, headers=headers)
-            os.remove(photo_path)
-        except:
-            pass
-
-    def process_sensor_data(self, sensor_data):
-#        """Sensör verilerini işleme"""
-        # Su pompası kontrolü
-        if sensor_data['soil_moisture'] < self.current_thresholds['soil_moisture']:
-            GPIO.output(RELAY_PIN, GPIO.HIGH)
-        else:
-            GPIO.output(RELAY_PIN, GPIO.LOW)
-
-        # Fan kontrolü
-        if (sensor_data['humidity'] > self.current_thresholds['humidity'] or 
-            sensor_data['gas_level'] > self.current_thresholds['gas_level']):
-            GPIO.output(FAN_PIN, GPIO.HIGH)
-        else:
-            GPIO.output(FAN_PIN, GPIO.LOW)
-
-        # LED kontrolü
-        if sensor_data['light_level'] < self.current_thresholds['light_level']:
-            if self.led_fade_start == 0:
-                self.led_fade_start = time.time()
-            
-            brightness = self.fade_leds(self.current_thresholds['led_brightness'])
-            self.set_led_color(self.current_thresholds['led_color'], brightness)
-        else:
-            self.set_led_color((0, 0, 0), 0)
-            self.led_fade_start = 0
-
-    def run(self):
-#        """Ana döngü"""
-        while True:
-            # Sensör verilerini okuma
-            if self.serial.in_waiting:
-                try:
-                    data = self.serial.readline().decode('utf-8').strip()
-                    sensor_data = json.loads(data)
-                    
-                    # Sensör verilerini işleme
-                    self.process_sensor_data(sensor_data)
-                    # Sensör verilerini sunucuya gönderme
-                    self.send_sensor_data(sensor_data)
-                except:
-                    continue
-
-            # Eşik değerlerini güncelleme (10 saniyede bir)
-            current_time = time.time()
-            if current_time - self.last_threshold_update >= 10:
-                self.get_thresholds()
-                self.last_threshold_update = current_time
-
-            # Fotoğraf çekme (1 saatte bir)
-            if current_time - self.last_photo_time >= 3600:
-                self.send_photo()
-                self.last_photo_time = current_time
-
-            time.sleep(0.1)
-
-if __name__ == "__main__":
+def get_thresholds():
     try:
-        system = SensorSystem()
-        system.run()
-    except KeyboardInterrupt:
-        GPIO.cleanup()
-        print("Program sonlandırıldı.")
+        response = requests.get(THRESHOLD_API_URL, headers=headers)
+        if response.status_code == 200:
+            raw_thresholds = response.json()
+            # Yalnızca integer'a dönüştürülebilen değerleri işleyin
+            thresholds = {}
+            for key, value in raw_thresholds.items():
+                try:
+                    thresholds[key] = int(value)  # Eğer value bir sayıysa integer'a dönüştür
+                except ValueError:
+                    thresholds[key] = value  # Eğer sayı değilse olduğu gibi bırak
+            return thresholds
+        else:
+            print("Eşik değerlerini alma hatası:", response.status_code)
+            return None
+    except Exception as e:
+        print("Sunucu bağlantı hatası:", e)
+        return None
+
+def get_led_settings():
+    try:
+        response = requests.get(LED_SETTINGS_API_URL, headers=headers)
+        if response.status_code == 200:
+            settings = response.json()
+            return settings
+        else:
+            print("LED değerlerini alma hatası:", response.status_code)
+            return None
+    except Exception as e:
+        print("Sunucu bağlantı hatası:", e)
+        return None
+
+def send_sensor_data(data):
+    try:
+        response = requests.post(SENSOR_DATA_API_URL, json=data, headers=headers)
+        if response.status_code == 200:
+            print("Sensör verileri başarıyla gönderildi.")
+        else:
+            print("Sensör verilerini gönderme hatası:", response.status_code)
+    except Exception as e:
+        print("Sunucuya veri gönderim hatası:", e)
+
+# Ana döngü
+last_threshold_update = 0  # Eşik değerlerinin en son güncellendiği zaman
+THRESHOLD_UPDATE_INTERVAL = 10  # Eşik değerlerini güncelleme aralığı (saniye)
+SENSOR_SEND_INTERVAL = 15  # Sensör verilerini gönderme aralığı (saniye)
+last_sensor_send = 0
+led_on = False  # LED durumu
+
+try:
+    while True:
+        current_time = time.time()
+
+        # Eşik değerlerini güncelleme (her 10 saniyede bir)
+        if current_time - last_threshold_update > THRESHOLD_UPDATE_INTERVAL:
+            new_thresholds = get_thresholds()
+            new_led_thresholds = get_led_settings()
+            if new_thresholds:
+                thresholds = new_thresholds  # Yeni değerler başarılıysa güncelle
+                led_thresholds = new_led_thresholds
+                print("Eşik değerleri ve renk güncellendi:", thresholds)
+            else:
+                print("Sunucuya ulaşılamadığı için en son eşik değerleri kullanılacak.")
+            last_threshold_update = current_time
+
+        # UART üzerinden JSON verisini okuma
+        if serial_conn.in_waiting > 0:
+            line = serial_conn.readline().decode('utf-8').strip()
+            try:
+                sensor_data = json.loads(line)
+            except json.JSONDecodeError:
+                print("Geçersiz JSON verisi:", line)
+                continue
+
+            # Sensör verilerini eşik değerleri ile karşılaştır
+            soil_moisture = sensor_data.get("soil_moisture", 0)
+            light = sensor_data.get("light", 0)  # LDR ışık değeri
+            gas = sensor_data.get("rawgas", 0)
+            pressure = sensor_data.get("pressure", 0)
+            temperature = sensor_data.get("temperature", 0)
+            humidity = sensor_data.get("humidity", 0)
+            print(str(soil_moisture) + " " + str(light) + " " + str(gas) + " " + str(pressure) + " " + str(temperature) + " " + str(humidity) + " \n" )
+            # Su pompası kontrolü
+            if soil_moisture < thresholds["soil_moisture"]:
+                control_relay(True)
+                print("Su pompası açıldı.")
+            else:
+                print("Su pompası kapatıldı.")
+                control_relay(False)
+
+            # Fan kontrolü (sıcaklık, nem veya gaz seviyesi yüksekse)
+            if temperature > thresholds["temperature"] or \
+               humidity > thresholds["humidity"] or \
+               gas > thresholds["gas_level"]:
+                control_fan(True)
+                print("Fan açıldı.")
+            else:
+                control_fan(False)
+
+            # LED şeridi kontrolü: Ortam ışığı düşükse LED'leri yavaşça aç
+            led_color_red = int(led_thresholds.get("red"))  # Sunucudan veya varsayılan renk
+            led_color_green = int(led_thresholds.get("green"))  # Sunucudan veya varsayılan renk
+            led_color_blue = int(led_thresholds.get("blue"))  # Sunucudan veya varsayılan renk
+            led_color = (led_color_red, led_color_green, led_color_blue)
+            brightness = min(max(light / 1023, 0.1), 1.0)  # Parlaklığı ışık değerine göre 0.1-1.0 arası ayarla
+            if light < thresholds["light_level"]:
+                control_led(tuple(led_color), brightness)  # Renk ve parlaklığı LED şeridine uygula
+                print("LED şeridi açıldı.")
+            else:
+                control_led((0, 0, 0), 0)  # LED'leri kapat
+                print("LED şeridi kapatıldı.")
+
+            # Sensör verilerini belirli aralıklarla sunucuya gönderme
+            if current_time - last_sensor_send > SENSOR_SEND_INTERVAL:
+                send_sensor_data(sensor_data)
+                last_sensor_send = current_time
+
+            # Diğer sensör kontrolleri
+            if pressure < thresholds["air_pressure"]:
+                print("Basınç seviyesi düşük.")
+
+        # LED parlaklık geçiş adımını güncelle
+
+        time.sleep(0.1)  # Program akışını hafifletmek için kısa bir gecikme
+
+except KeyboardInterrupt:
+    print("Program sonlandırıldı.")
+
+finally:
+    control_led((0,0,0),0)
+    # GPIO pinleri temizle
+    GPIO.cleanup()
+    serial_conn.close()
