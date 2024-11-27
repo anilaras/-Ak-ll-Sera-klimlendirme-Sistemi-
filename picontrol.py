@@ -40,6 +40,8 @@ DEFAULT_THRESHOLDS = {
     'led_brightness': 100
 }
 
+headers = {"Authorization": "cokgizli"}
+
 class SensorSystem:
     def __init__(self):
         # GPIO ayarları
@@ -69,7 +71,7 @@ class SensorSystem:
         self.led_target_brightness = 0
         
         # API endpoint'leri
-        self.API_BASE_URL = "http://your-server-address/api"
+        self.API_BASE_URL = "http://yesilarge.online/api/v1/"
         
     def get_network_info(self):
         """Ağ bilgilerini alma"""
@@ -140,7 +142,7 @@ class SensorSystem:
     def get_thresholds(self):
         """Sunucudan eşik değerlerini alma"""
         try:
-            response = requests.get(f"{self.API_BASE_URL}/thresholds")
+            response = requests.get(f"{self.API_BASE_URL}/thresholds", headers= headers)
             if response.status_code == 200:
                 self.current_thresholds = response.json()
                 return True
@@ -151,7 +153,7 @@ class SensorSystem:
     def send_sensor_data(self, sensor_data):
         """Sensör verilerini sunucuya gönderme"""
         try:
-            requests.post(f"{self.API_BASE_URL}/sensor-data", json=sensor_data)
+            requests.post(f"{self.API_BASE_URL}/sensor-data", json=sensor_data, headers=headers)
         except:
             pass
 
@@ -165,7 +167,7 @@ class SensorSystem:
         try:
             with open(photo_path, 'rb') as photo:
                 files = {'photo': photo}
-                requests.post(f"{self.API_BASE_URL}/upload-photo", files=files)
+                requests.post(f"{self.API_BASE_URL}/upload-photo", files=files, headers=headers)
             os.remove(photo_path)
         except:
             pass
