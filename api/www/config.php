@@ -1,10 +1,9 @@
 <?php
 // config.php
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'yesilarge_api');
+define('DB_NAME', 'api');
 define('DB_USER', 'root');
-define('DB_PASS', '');
-
+define('DB_PASS', 'yesilargepass');
 
 define('API_VERSION', 'v1');
 

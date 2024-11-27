@@ -51,3 +51,6 @@ VALUES (30, 500, 1000, 1013, 25, 60);
 
 INSERT INTO led_settings (red, green, blue, brightness) 
 VALUES (128, 0, 128, 100);
+
+INSERT INTO api_tokens (token, description, is_active) 
+VALUES ('gizli', 'token', TRUE);

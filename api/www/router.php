@@ -35,7 +35,7 @@ class Router {
             return false;
         }
 
-        $token = str_replace('Bearer ', '', $headers['Authorization']);
+        $token = $headers['Authorization'];
         if (!$this->db->validateToken($token)) {
             $this->sendResponse(401, ['error' => 'Invalid token']);
             return false;
@@ -57,8 +57,7 @@ class Router {
                 return;
             }
         }
-        $url_route = substr($this->uri, strpos($this->uri, "/") + 1);
-        switch ($url_route) {
+        switch ($this->uri) {
             case 'api/' . API_VERSION . '/sensor-data':
                 if ($this->method === 'POST') {
                     $data = json_decode(file_get_contents('php://input'), true);

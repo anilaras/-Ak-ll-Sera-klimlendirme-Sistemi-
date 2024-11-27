@@ -1,62 +1,40 @@
-version: '3.8'
-
+version: "3.8"
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: sensor_api
-    ports:
-      - "8080:80"
+
+  # PHP Service
+  php:
+    build: './php_docker/'
     volumes:
-      - ./src:/var/www/html
-      - ./logs:/var/log/apache2
-    environment:
-      - DB_HOST=db
-      - DB_NAME=sensor_system
-      - DB_USER=sensor_user
-      - DB_PASS=sensor_password
+      - ./www/:/var/www/html/
+
+  # Apache Service
+  apache:
+    build: './apache_docker/'
     depends_on:
-      - db
-    networks:
-      - sensor-network
-    restart: unless-stopped
-
-  db:
-    image: mysql:8.0
-    container_name: sensor_db
+      - php
     ports:
-      - "3306:3306"
+      - "80:80"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql/init:/docker-entrypoint-initdb.d
-    environment:
-      - MYSQL_DATABASE=sensor_system
-      - MYSQL_USER=sensor_user
-      - MYSQL_PASSWORD=sensor_password
-      - MYSQL_ROOT_PASSWORD=root_password
-    networks:
-      - sensor-network
-    restart: unless-stopped
+      - ./www/:/var/www/html/
 
+  # MariaDB Service
+  mariadb:
+    image: mariadb:10.11
+    environment:
+      MYSQL_ROOT_PASSWORD: yesilargepass
+    volumes:
+      - mysqldata:/var/lib/mysql
+
+  # phpMyAdmin Service
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: sensor_phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     ports:
-      - "8081:80"
+      - 8080:80
     environment:
-      - PMA_HOST=db
-      - PMA_USER=root
-      - PMA_PASSWORD=root_password
+      PMA_HOST: mariadb
     depends_on:
-      - db
-    networks:
-      - sensor-network
-    restart: unless-stopped
+      - mariadb
 
-networks:
-  sensor-network:
-    driver: bridge
-
+# Volumes
 volumes:
-  mysql_data:
+  mysqldata:
