@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'api');
 define('DB_USER', 'root');
-define('DB_PASS', 'yesilargepass');
+define('DB_PASS', 'yesilarge');
 
 define('API_VERSION', 'v1');
 
