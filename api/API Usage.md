@@ -4,7 +4,7 @@
 ```
 POST /api/v1/sensor-data
 
-Header: Authorization: Bearer token
+Header: Authorization: token
 
 Body: {"rawgas":11,"correctedPPMgas":0.088671,"PPMgas":0.11963,"light":189,"soil_moisture":1022,"temperature":27.27,"humidity":26.52539,"pressure":878.3098}
 ```
@@ -12,13 +12,13 @@ Body: {"rawgas":11,"correctedPPMgas":0.088671,"PPMgas":0.11963,"light":189,"soil
 ```
 GET /api/v1/sensor-data?start_date=2024-01-01&end_date=2024-01-31
 
-Header: Authorization: Bearer token
+Header: Authorization: token
 ```
 ## Eşik Değerlerini Alma
 ```
 GET /api/v1/thresholds
 
-Header: Authorization: Bearer token
+Header: Authorization: token
 ```
 
 ## Eşik Değerlerini Güncelleme
@@ -26,7 +26,7 @@ Header: Authorization: Bearer token
 ```
 POST /api/v1/thresholds
 
-Header: Authorization: Bearer token
+Header: Authorization: token
 
 Body: {
 
@@ -48,13 +48,13 @@ Body: {
 ```
 GET /api/v1/led-settings
 
-Header: Authorization: Bearer token
+Header: Authorization: token
 ```
 ## LED Ayarlarını Güncelleme
 ```
 POST /api/v1/led-settings
 
-Header: Authorization: Bearer token
+Header: Authorization: token
 
 Body: {
 
