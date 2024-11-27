@@ -66,7 +66,7 @@ class SensorSystem:
         self.led_target_brightness = 0
         
         # API endpoint'leri
-        self.API_BASE_URL = "http://yesilarge.online/api/v1/"
+        self.API_BASE_URL = "http://yesilarge.online/api/v1"
         
     def get_network_info(self):
 #        """Ağ bilgilerini alma"""
@@ -109,7 +109,7 @@ class SensorSystem:
         return brightness
 
     def set_led_color(self, color, brightness):
-#        """LED şerit rengini ve parlaklığını ayarlama"""
+       print("LED şerit rengini ve parlaklığını ayarlanıyor \n r: " + r + " g: " + g + " b: " + b + " brightness: " + brightness)
         r, g, b = color
         for i in range(LED_COUNT):
             self.strip.setPixelColor(i, Color(
@@ -119,19 +119,21 @@ class SensorSystem:
             ))
         self.strip.show()
 
+
     def get_thresholds(self):
-#        """Sunucudan eşik değerlerini alma"""
+        print("Sunucudan eşik değerlerini alınıyor")
         try:
             response = requests.get(f"{self.API_BASE_URL}/thresholds", headers= headers)
             if response.status_code == 200:
                 self.current_thresholds = response.json()
+                print("Eşik değerleri başarıyla alındı \n " + self.current_thresholds)
                 return True
         except:
             return False
         return False
 
     def send_sensor_data(self, sensor_data):
-#        """Sensör verilerini sunucuya gönderme"""
+        print("Sensör verilerini sunucuya gönderiliyor")
         try:
             requests.post(f"{self.API_BASE_URL}/sensor-data", json=sensor_data, headers=headers)
         except:
