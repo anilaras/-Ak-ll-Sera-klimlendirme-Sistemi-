@@ -10,6 +10,7 @@ import Foundation
 enum API {
     case sensorValue
     case ledSettings
+    case pastValue(startDate: String, endDate: String)
 }
 
 extension API {
@@ -20,6 +21,8 @@ extension API {
             return "/api/v1/thresholds"
         case .ledSettings:
             return "/api/v1/led-settings"
+        case .pastValue(startDate: let startDate, endDate: let endDate):
+            return "/api/v1/sensor-data?start_date=\(startDate)&end_date=\(endDate)"
         }
     }
     

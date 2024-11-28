@@ -18,16 +18,15 @@ struct TabView: View {
                 case .home:
                     HomeView()
                 case .past:
-                    EmptyView()
-                    Spacer()
+                    PastView()
                 case .settings:
                     SettingsView()
-                    Spacer()
                 }
                 
                     
                 tabView()
             }
+            .edgesIgnoringSafeArea(.bottom)
             .background(Color(hex: "#232F34"))
         }
         .navigationBarHidden(true)
@@ -61,7 +60,7 @@ private extension TabView {
         }
         .frame(height: 50)
         .background(Color(hex: "#232F34"))
-        .padding([.top])
+        .padding([.top, .bottom])
     }
 }
 

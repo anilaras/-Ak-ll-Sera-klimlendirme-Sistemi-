@@ -12,9 +12,14 @@ protocol ServiceProtocol {
     static func updateSensorValue(model: SensorValueModel, completion: @escaping (Result<PostReturnModel, Error>) -> ())
     static func getLedValue(completion: @escaping (Result<LedModel, Error>) -> ())
     static func updateLedValue(model: LedModel, completion: @escaping (Result<PostReturnModel, Error>) -> ())
+    static func getPastValues(startDate: String, endDate: String,completion: @escaping (Result<[PastValueModel], Error>) -> ())
 }
 
 struct Service: ServiceProtocol {
+    static func getPastValues(startDate: String, endDate: String, completion: @escaping (Result<[PastValueModel], any Error>) -> ()) {
+        getRequest(target: .pastValue(startDate: startDate, endDate: endDate), completion: completion)
+    }
+    
     static func getLedValue(completion: @escaping (Result<LedModel, any Error>) -> ()) {
         getRequest(target: .ledSettings, completion: completion)
     }
