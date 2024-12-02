@@ -13,8 +13,7 @@ struct SGACSystemAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TabView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            LaunchView()
         }
     }
 }

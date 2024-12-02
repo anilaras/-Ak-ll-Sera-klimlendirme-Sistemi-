@@ -30,12 +30,13 @@ struct SliderCell: View {
             HStack {
                 Text(title)
                     .font(.headline)
+                    .foregroundColor(.white)
                     .multilineTextAlignment(.leading)
                 
                 Spacer()
                 
                 Text("\(Int(sliderValue))")
-                    
+                    .foregroundColor(.white)
             }
             .padding(.bottom, 8)
             .padding([.leading, .trailing])
@@ -54,7 +55,8 @@ struct SliderCell: View {
             
         }
         .padding()
-        .background(Color.white)
+        .background(.ultraThinMaterial)
+        .background(Color.black)
         .cornerRadius(10)
         .shadow(radius: 3)
         .padding([.leading,.top,.trailing])

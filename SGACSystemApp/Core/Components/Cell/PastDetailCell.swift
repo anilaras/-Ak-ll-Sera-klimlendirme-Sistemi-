@@ -16,6 +16,7 @@ struct PastDetailCell: View {
     let airTemperature: Int
     let lightAmount: Int
     let gasAmount: Int
+    let humidity: Int
     let time: String
     
     var body: some View {
@@ -24,9 +25,11 @@ struct PastDetailCell: View {
                 Image(systemName: "drop.fill")
                     .foregroundColor(.blue)
                 Text("Toprak Nemi")
+                    .foregroundColor(.white)
                     .font(.headline)
                 Spacer()
                 Text("\(soilMoisture)%")
+                    .foregroundColor(.white)
                     .font(.body)
             }
             
@@ -35,8 +38,10 @@ struct PastDetailCell: View {
                     .foregroundColor(.orange)
                 Text("Hava Basıncı")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Spacer()
                 Text("\(airPressure) HPA")
+                    .foregroundColor(.white)
                     .font(.body)
             }
             
@@ -45,19 +50,23 @@ struct PastDetailCell: View {
                     .foregroundColor(.red)
                 Text("Hava Sıcaklığı")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Spacer()
                 Text("\(airTemperature)°C")
                     .font(.body)
+                    .foregroundColor(.white)
             }
             
             HStack {
                 Image(systemName: "lightbulb")
                     .foregroundColor(.yellow)
                 Text("Işık Miktarı")
+                    .foregroundColor(.white)
                     .font(.headline)
                 Spacer()
                 Text("\(lightAmount) Lümen")
                     .font(.body)
+                    .foregroundColor(.white)
             }
             
             HStack {
@@ -65,26 +74,42 @@ struct PastDetailCell: View {
                     .foregroundColor(.green)
                 Text("Gaz Miktarı")
                     .font(.headline)
+                    .foregroundColor(.white)
                 Spacer()
                 Text("\(gasAmount) PPM")
                     .font(.body)
+                    .foregroundColor(.white)
+            }
+            
+            HStack {
+                Image(systemName: "drop")
+                    .foregroundColor(.orange)
+                Text("Ortam Nemi")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                Spacer()
+                Text("\(humidity)%")
+                    .font(.body)
+                    .foregroundColor(.white)
             }
             
             Divider()
             
             HStack {
                 Image(systemName: "clock")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white)
                 Text("Saat")
+                    .foregroundColor(.white)
                     .font(.subheadline)
                 Spacer()
                 Text(time)
                     .font(.footnote)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.white.opacity(0.6))
             }
         }
         .padding()
-        .background(Color.white)
+        .background(.ultraThinMaterial)
+        .background(Color.black)
         .cornerRadius(10)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         .padding([.leading,.top,.trailing])
@@ -96,6 +121,6 @@ struct PastDetailCell: View {
                    airPressure: 1015,
                    airTemperature: 25,
                    lightAmount: 2000,
-                   gasAmount: 300,
+                   gasAmount: 300, humidity: 100,
                    time: "12:45 PM")
 }

@@ -69,14 +69,15 @@ struct SettingsView: View {
                         HStack {
                             Text("Işık Rengi (R: \(bgColor.components.red), G: \(bgColor.components.green), B: \(bgColor.components.blue))")
                                 .font(.title3.bold())
-                                .foregroundColor(Color(hex: "#283739"))
+                                .foregroundColor(.white)
                             Spacer()
                             Image(systemName: "arrow.right")
                                 .renderingMode(.template)
-                                .foregroundColor(Color(hex: "#283739"))
+                                .foregroundColor(.white)
                         }
                         .padding()
-                        .background(Color.white)
+                        .background(.ultraThinMaterial)
+                        .background(Color.black)
                         .cornerRadius(10)
                     })
                     .padding([.leading,.top,.trailing])
@@ -88,7 +89,7 @@ struct SettingsView: View {
                 Spacer()
             }
         }
-        .background(Color(hex: "#232F34"))
+        .background(Color.backgroundColor())
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .navigationViewStyle(.stack)

@@ -35,6 +35,28 @@ struct DateFormatterHelper {
         }
     }
     
+    static func dateFormatterForDetailsForHome(with date: String) -> String {
+        let dateFormatters = dateFormatter(with: "yyyy-MM-dd HH:mm:ss")
+        if let date = dateFormatters.date(from: date) {
+            let dateFormatterForDetails = dateFormatter(with: "dd MMMM yyyy HH:mm")
+            dateFormatterForDetails.locale = Locale(identifier: "tr")
+            return dateFormatterForDetails.string(from: date)
+        } else {
+            return date
+        }
+    }
+    
+    static func dateFormatterForDetailsForPast(with date: String) -> String {
+        let dateFormatters = dateFormatter(with: "yyyy-MM-dd HH:mm:ss")
+        if let date = dateFormatters.date(from: date) {
+            let dateFormatterForDetails = dateFormatter(with: "dd MMMM yyyy")
+            dateFormatterForDetails.locale = Locale(identifier: "tr")
+            return dateFormatterForDetails.string(from: date)
+        } else {
+            return date
+        }
+    }
+    
     static func dateFormatterForFixed(with date: String) -> String {
         let dateFormatters = dateFormatter(with: "yyyy-MM-dd HH:mm:ss")
         if let date = dateFormatters.date(from: date) {

@@ -10,6 +10,14 @@ import SwiftUI
 
 extension Color {
     
+    static func backgroundColor() -> Color {
+        return Color(hex: "1c1c1c")
+    }
+    
+    static func textColor() -> Color {
+        return Color(hex: "#F5F5F5")
+    }
+    
     func toHex() -> String {
         guard let components = cgColor?.components else {
             return "FFFFFF"

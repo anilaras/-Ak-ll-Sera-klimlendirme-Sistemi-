@@ -48,17 +48,17 @@ struct PastDetailView: View {
                 
                 LineChartView(data: chartData,
                               title: chartTitle,
-                              legend: "Bugün",
+                              legend: title,
                               form: CGSize(width: getRect().width - 34, height: 220))
                 
                 ForEach(showingPastValue, id: \.id) { item in
-                    PastDetailCell(model: item, soilMoisture: item.soilMoisture,airPressure: item.pressure,airTemperature: item.temperature,lightAmount: item.light,gasAmount: item.rawGas,time: DateFormatterHelper.dateFormatterForDetails(with: item.createdAt))
+                    PastDetailCell(model: item, soilMoisture: item.soilMoisture,airPressure: item.pressure,airTemperature: item.temperature,lightAmount: item.light,gasAmount: item.rawGas, humidity: item.humidity, time: DateFormatterHelper.dateFormatterForDetails(with: item.createdAt))
                 }
             }
             
             Spacer()
         }
-        .background(Color(hex: "#232F34"))
+        .background(Color.backgroundColor())
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .navigationViewStyle(.stack)
@@ -129,18 +129,26 @@ extension PastDetailView {
                 } label: {
                     Label("Gaz Miktarı", systemImage: "leaf")
                 }
+                
+                Button {
+                    chartTitle = "Ortam Nemi"
+                    chartData = showingPastValue.map { Double($0.humidity) }
+                } label: {
+                    Label("Ortam Nemi", systemImage: "drop")
+                }
             } label: {
                 HStack {
                     Text(chartTitle)
+                        .foregroundColor(.white)
                     
                     Image(systemName: "control")
+                        .foregroundColor(.white)
                         .rotationEffect(.degrees(180))
                 }
                 .padding(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(.gray, lineWidth: 1)
-                )
+                .background(.ultraThinMaterial)
+                .background(Color.black)
+                .cornerRadius(10)
             }
         }
         .padding([.trailing], 22)

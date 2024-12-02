@@ -10,46 +10,29 @@ import SwiftUICharts
 
 struct HomeView: View {
     
-    @State private var showStatisticModal: Bool = false
-    
-    @State private var selectedStatisticTitle: String = ""
-    @State private var selectedStatisticLegend: String = "Son 7 gün"
+    @State private var value: PastValueModel?
     
     var body: some View {
         ZStack {
             mainContent
-            
-            if showStatisticModal {
-                PopupView(close: $showStatisticModal, content: LineChartComponent(showModal: $showStatisticModal, title: selectedStatisticTitle, legend: selectedStatisticLegend))
-            }
         }
-        .background(Color(hex: "#232F34"))
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .navigationViewStyle(.stack)
     }
     
-    @ViewBuilder
-    private func HStackInfoCell(oneTitle: String, oneValue: String, twoTitle: String, twoValue: String, onPrimaryButtonTap: @escaping () -> Void = {}, onSecondaryButtonTap: @escaping () -> Void = {}) -> some View {
-        HStack {
-            
-            Spacer()
-            
-            HomeInfoCell(title: oneTitle, value: oneValue)
-                .onTapGesture {
-                    onPrimaryButtonTap()
-                }
-            
-            Spacer()
-            
-            HomeInfoCell(title: twoTitle, value: twoValue)
-                .onTapGesture {
-                    onSecondaryButtonTap()
-                }
-            
-            Spacer()
+    private func getMostRecentValue(from values: [PastValueModel]) -> [PastValueModel] {
+        let dateFormatter = ISO8601DateFormatter()
+        
+        return values.sorted { first, second in
+            guard
+                let firstDate = dateFormatter.date(from: first.createdAt),
+                let secondDate = dateFormatter.date(from: second.createdAt)
+            else {
+                return false
+            }
+            return firstDate > secondDate
         }
-        .padding([.leading, .top, .trailing])
     }
 }
 
@@ -63,56 +46,44 @@ extension HomeView {
             HStack {
                 Spacer()
                 Text("Sera İklimlendirme Sistemi")
-                    .foregroundColor(.white)
+                    .foregroundColor(Color.textColor())
                     .font(.system(size: 24).bold())
                     .multilineTextAlignment(.center)
                     .padding(.top)
                 Spacer()
             }
-            
-            ScrollView {
-                
-                HStack {
-                    Text("Sera Bilgisi")
-                        .foregroundColor(.white)
-                        .font(.system(size: 18).bold())
                         
-                    Spacer()
-                }
-                .padding(.leading)
-                
-                HStackInfoCell(oneTitle: "Toprak Nemi", oneValue: "%50", twoTitle: "Hava Basıncı", twoValue: "25 Bar", onPrimaryButtonTap: {
-                    selectedStatisticTitle = "Toprak Nemi"
-                    showStatisticModal = true
-                }, onSecondaryButtonTap: {
-                    selectedStatisticTitle = "Hava Basıncı"
-                    showStatisticModal = true
-                })
-                
-                HStackInfoCell(oneTitle: "Hava Sıcaklığı", oneValue: "24°", twoTitle: "Işık Miktarı", twoValue: "3500 Lümen", onPrimaryButtonTap: {
-                    selectedStatisticTitle = "Hava Sıcaklığı"
-                    showStatisticModal = true
-                }, onSecondaryButtonTap: {
-                    selectedStatisticTitle = "Işık Miktarı"
-                    showStatisticModal = true
-                })
-                
-                HomeInfoCell(title: "Gaz Miktarı", value: "150 PPM")
-                    .onTapGesture {
-                        selectedStatisticTitle = "Gaz Miktarı"
-                        showStatisticModal = true
-                    }
-                    .padding([.leading, .trailing], 24)
-                    .padding(.top)
-                
+            HStack {
+                Text("Sera Bilgisi")
+                    .foregroundColor(.white)
+                    .font(.system(size: 18).bold())
+                    
+                Spacer()
+            }
+            .padding([.leading,.top])
+            
+            if let item = value {
+                PastDetailCell(model: item, soilMoisture: item.soilMoisture,airPressure: item.pressure,airTemperature: item.temperature,lightAmount: item.light,gasAmount: item.rawGas, humidity: item.humidity,time: DateFormatterHelper.dateFormatterForDetailsForHome(with: item.createdAt))
+            } else {
+                ProgressView()
             }
 
             
             Spacer()
         }
-        .background(Color(hex: "#232F34"))
+        .background(Color.backgroundColor())
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .navigationViewStyle(.stack)
+        .onAppear {
+            Service.getPastValues(startDate: "", endDate: "") { result in
+                switch result {
+                case .success(let success):
+                    value = getMostRecentValue(from: success).first
+                case .failure(let failure):
+                    print(failure.localizedDescription)
+                }
+            }
+        }
     }
 }

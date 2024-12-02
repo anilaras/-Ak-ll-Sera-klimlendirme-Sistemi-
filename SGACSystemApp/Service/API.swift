@@ -34,7 +34,7 @@ extension API {
         let baseURL = "http://yesilarge.online\(path)"
         let encodedUrlString = baseURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
 
-        guard let url = URL(string: encodedUrlString) else { fatalError() }
+        guard let url = URL(string: baseURL) else { fatalError() }
         return url
     }
 }

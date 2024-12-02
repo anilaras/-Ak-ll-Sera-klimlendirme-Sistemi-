@@ -15,15 +15,17 @@ struct PastTabCell: View {
         HStack {
             Text(title)
                 .font(.system(size: 18).bold())
-                .foregroundColor(.black)
-            
+                .foregroundColor(.white)
+
             Spacer()
             
             Image(systemName: "control")
+                .foregroundColor(.white)
                 .rotationEffect(.degrees(90))
         }
         .padding()
-        .background(Color.white)
+        .background(.ultraThinMaterial)
+        .background(Color.black)
         .cornerRadius(14)
         .padding([.leading, .top,.trailing])
     }

@@ -27,7 +27,7 @@ struct TabView: View {
                 tabView()
             }
             .edgesIgnoringSafeArea(.bottom)
-            .background(Color(hex: "#232F34"))
+            .background(Color.backgroundColor())
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -59,8 +59,8 @@ private extension TabView {
             Spacer()
         }
         .frame(height: 50)
-        .background(Color(hex: "#232F34"))
         .padding([.top, .bottom])
+        .padding(.bottom)
     }
 }
 
@@ -77,11 +77,11 @@ struct TabBarIcon: View {
                 Image(systemName: imageName)
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color(hex: "#90EE90"))
                     .frame(width: 24,height: 24)
                 
                 Text(tabName)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color(hex: "#90EE90"))
                     .font(.title3.bold())
                     .padding(.bottom)
 
