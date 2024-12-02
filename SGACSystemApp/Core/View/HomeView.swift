@@ -11,6 +11,7 @@ import SwiftUICharts
 struct HomeView: View {
     
     @State private var value: PastValueModel?
+    @State private var photo: Image = Image(systemName: "photo.artframe")
     
     var body: some View {
         ZStack {
@@ -45,25 +46,44 @@ extension HomeView {
         VStack {
             HStack {
                 Spacer()
-                Text("Sera İklimlendirme Sistemi")
+                Text("Yeşil Arge")
                     .foregroundColor(Color.textColor())
                     .font(.system(size: 24).bold())
                     .multilineTextAlignment(.center)
                     .padding(.top)
                 Spacer()
             }
-                        
-            HStack {
-                Text("Sera Bilgisi")
-                    .foregroundColor(.white)
-                    .font(.system(size: 18).bold())
-                    
-                Spacer()
-            }
-            .padding([.leading,.top])
             
             if let item = value {
-                PastDetailCell(model: item, soilMoisture: item.soilMoisture,airPressure: item.pressure,airTemperature: item.temperature,lightAmount: item.light,gasAmount: item.rawGas, humidity: item.humidity,time: DateFormatterHelper.dateFormatterForDetailsForHome(with: item.createdAt))
+                ScrollView {
+                    HStack {
+                        Text("Sera Bilgisi")
+                            .foregroundColor(.white)
+                            .font(.system(size: 18).bold())
+                            
+                        Spacer()
+                    }
+                    .padding([.leading,.top])
+                    
+                    PastDetailCell(model: item, soilMoisture: item.soilMoisture,airPressure: item.pressure,airTemperature: item.temperature,lightAmount: item.light,gasAmount: item.rawGas, humidity: item.humidity,time: DateFormatterHelper.dateFormatterForDetailsForHome(with: item.createdAt))
+                    
+                    HStack {
+                        Text("Sera Fotoğrafı")
+                            .foregroundColor(.white)
+                            .font(.system(size: 18).bold())
+                            
+                        Spacer()
+                    }
+                    .padding([.leading,.top])
+                    
+                    photo
+                        .resizable()
+                        .frame(height: 300)
+                        .foregroundStyle(.ultraThinMaterial)
+                        .foregroundColor(Color.black)
+                        .cornerRadius(10)
+                        .padding()
+                }
             } else {
                 ProgressView()
             }
@@ -80,6 +100,17 @@ extension HomeView {
                 switch result {
                 case .success(let success):
                     value = getMostRecentValue(from: success).first
+                case .failure(let failure):
+                    print(failure.localizedDescription)
+                }
+            }
+            
+            Service.fetchPhoto { result in
+                switch result {
+                case .success(let success):
+                    if let uiImage = UIImage(data: success) {
+                        photo = Image(uiImage: uiImage)
+                    }
                 case .failure(let failure):
                     print(failure.localizedDescription)
                 }

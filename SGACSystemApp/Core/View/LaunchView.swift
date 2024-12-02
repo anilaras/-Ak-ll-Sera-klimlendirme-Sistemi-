@@ -10,7 +10,7 @@ import SwiftUI
 struct LaunchView: View {
     
     @State private var isActive: Bool = false
-
+    
     var body: some View {
         ZStack {
             if isActive {
@@ -30,6 +30,9 @@ struct LaunchView: View {
                         .tint(.white)
                         .scaleEffect(2)
                     Spacer()
+                    Text("© 2024 İlker Uğur Kaya")
+                        .foregroundColor(.gray)
+                        .font(.footnote)
                 }
                 .frame(width: getRect().width)
                 .background(Color.backgroundColor())

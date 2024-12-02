@@ -13,9 +13,14 @@ protocol ServiceProtocol {
     static func getLedValue(completion: @escaping (Result<LedModel, Error>) -> ())
     static func updateLedValue(model: LedModel, completion: @escaping (Result<PostReturnModel, Error>) -> ())
     static func getPastValues(startDate: String, endDate: String,completion: @escaping (Result<[PastValueModel], Error>) -> ())
+    static func fetchPhoto(completion: @escaping (Result<Data, Error>) -> ())
 }
 
 struct Service: ServiceProtocol {
+    static func fetchPhoto(completion: @escaping (Result<Data, any Error>) -> ()) {
+        getRequestData(target: .fetchPhoto, completion: completion)
+    }
+    
     static func getPastValues(startDate: String, endDate: String, completion: @escaping (Result<[PastValueModel], any Error>) -> ()) {
         getRequest(target: .pastValue(startDate: startDate, endDate: endDate), completion: completion)
     }
@@ -58,6 +63,25 @@ extension Service {
                 } catch {
                     completion(.failure(error))
                 }
+            }
+        }
+        task.resume()
+    }
+    
+    private static func getRequestData(target: API, completion: @escaping (Result<Data, Error>) -> ()) {
+        var request = URLRequest(url: target.baseURL)
+        request.addValue(target.token, forHTTPHeaderField: "Authorization")
+
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            if let data = data {
+                completion(.success(data))
             }
         }
         task.resume()
