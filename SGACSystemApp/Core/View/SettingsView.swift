@@ -20,15 +20,27 @@ struct SettingsView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                Text("Ayarlar")
-                    .foregroundColor(.white)
-                    .font(.system(size: 24).bold())
-                    .multilineTextAlignment(.center)
-                    .padding(.top)
-                Spacer()
+            ZStack(alignment: .trailing) {
+                HStack {
+                    Spacer()
+                    Text("Ayarlar")
+                        .foregroundColor(.white)
+                        .font(.system(size: 24).bold())
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                }
+                
+                NavigationLink {
+                    InfoView()
+                } label: {
+                    Image(systemName: "info.circle")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.blue)
+                        .padding(.trailing)
+                }
             }
+            .padding(.top)
             
             if showModals {
                 ScrollView {
