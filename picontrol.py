@@ -106,7 +106,7 @@ def send_sensor_data(data):
 
 # Ana döngü
 last_threshold_update = 0  # Eşik değerlerinin en son güncellendiği zaman
-THRESHOLD_UPDATE_INTERVAL = 10  # Eşik değerlerini güncelleme aralığı (saniye)
+THRESHOLD_UPDATE_INTERVAL = 2  # Eşik değerlerini güncelleme aralığı (saniye)
 SENSOR_SEND_INTERVAL = 15  # Sensör verilerini gönderme aralığı (saniye)
 last_sensor_send = 0
 led_on = False  # LED durumu
@@ -122,7 +122,7 @@ try:
             if new_thresholds:
                 thresholds = new_thresholds  # Yeni değerler başarılıysa güncelle
                 led_thresholds = new_led_thresholds
-                print("Eşik değerleri ve renk güncellendi:", thresholds)
+                print("Eşik değerleri ve renk güncellendi:", thresholds, led_thresholds)
             else:
                 print("Sunucuya ulaşılamadığı için en son eşik değerleri kullanılacak.")
             last_threshold_update = current_time
@@ -145,19 +145,16 @@ try:
             humidity = sensor_data.get("humidity", 0)
             print(str(soil_moisture) + " " + str(light) + " " + str(gas) + " " + str(pressure) + " " + str(temperature) + " " + str(humidity) + " \n" )
             # Su pompası kontrolü
-            if soil_moisture < thresholds["soil_moisture"]:
-                control_relay(True)
-                print("Su pompası açıldı.")
-            else:
-                print("Su pompası kapatıldı.")
+            if soil_moisture > thresholds["soil_moisture"]:
                 control_relay(False)
+            else:
+                control_relay(True)
 
             # Fan kontrolü (sıcaklık, nem veya gaz seviyesi yüksekse)
             if temperature > thresholds["temperature"] or \
                humidity > thresholds["humidity"] or \
                gas > thresholds["gas_level"]:
                 control_fan(True)
-                print("Fan açıldı.")
             else:
                 control_fan(False)
 
@@ -169,10 +166,8 @@ try:
             brightness = min(max(light / 1023, 0.1), 1.0)  # Parlaklığı ışık değerine göre 0.1-1.0 arası ayarla
             if light < thresholds["light_level"]:
                 control_led(tuple(led_color), brightness)  # Renk ve parlaklığı LED şeridine uygula
-                print("LED şeridi açıldı.")
             else:
                 control_led((0, 0, 0), 0)  # LED'leri kapat
-                print("LED şeridi kapatıldı.")
 
             # Sensör verilerini belirli aralıklarla sunucuya gönderme
             if current_time - last_sensor_send > SENSOR_SEND_INTERVAL:
